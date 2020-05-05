@@ -68,6 +68,7 @@ class PlotBlobs(object):
                 ret, self.frame, self.cnt = FrameCapture(self.cap)
                 if (ret==True):
                     frame_resized = self.frame.copy()
+                    source_frame = self.frame.copy()
                     frame_resized1 = frame_resized.copy()
                     coord = []
                     if (self.cnt in self.b_id):
@@ -97,6 +98,7 @@ class PlotBlobs(object):
                                 #print(crop_img.shape)
                              #   frame_resized1 = frame_resized.copy()
                                 if contrast <= 0.7 and len(self.b_x[i][:]) < 20:
+
                                     birds.append(crop_img.copy())
                                     coord.append([ix, x, y, x - x1, y - y1, s, len(self.b_x[i][:])])
                                     #frame_name = 'frame_' + str(self.cnt) + '_' + str(ix) +'_' + 'x_'+str(x) +'_y_'+str(y) + '_C_' + str(contrast)+'.png'
@@ -136,7 +138,7 @@ class PlotBlobs(object):
                                 blank_image_concat = Temp[-1]
 
                         # Graphics window
-                        pba = GUI_Birds(blank_image_concat, len(birds), birds, self.cnt, coord,  self.output_path, self.F)
+                        pba = GUI_Birds(blank_image_concat, len(birds), birds, self.cnt, coord,  self.output_path, self.F, source_frame)
                         pba.root.mainloop()
                       #  root = tkinter.Tk()
                        # im = Image.fromarray(blank_image_concat)

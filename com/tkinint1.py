@@ -8,7 +8,7 @@ import os
 from com.common import *
 class GUI_Birds:
 
-    def __init__(self, image, N, birds, cnt, coord, output_path, F ):
+    def __init__(self, image, N, birds, cnt, coord, output_path, F, source_frame ):
         """ Initialize application which uses OpenCV + Tkinter. It displays
             a video stream in a Tkinter window and stores current snapshot on disk """
         #self.vs = cv2.imread(image, 0)
@@ -24,6 +24,7 @@ class GUI_Birds:
         self.y1 = [coord[i][4] for i in range(len(coord))]
         self.s =  [coord[i][5] for i in range (len(coord))]
         self.L =  [coord[i][6] for i in range (len(coord))]
+        self.source_frame = source_frame
         self.path_for_annotation_txt = 'annotation_log'
         # Set up GUI
         self.root = Tk()  # initialize root window
@@ -158,7 +159,8 @@ class GUI_Birds:
                 print(COLOR.GREEN + frame_name + COLOR.END)
                 self.F.write('{0:5}{1:8}{2:8}{3:8}{4:8}{5:6}{6:4}\n'.format(self.cnt, self.x[i], self.y[i], self.x1[i], self.y1[i], self.s[i], self.A.count(True)))
                 print (self.output_path+'/'+frame_name)
-                cv2.imwrite(self.output_path+'/'+frame_name, self.birds[i])
+                #cv2.imwrite(self.output_path+'/'+frame_name, self.birds[i])
+                cv2.imwrite(self.output_path + '/' + frame_name, self.source_frame)
             else:
                 print(COLOR.RED + "Birds REMOVED" + COLOR.END)
                 #print (COLOR.RED + self.output_path+'/'+frame_name + 'unsaved'+ COLOR.END)
