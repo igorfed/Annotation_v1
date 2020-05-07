@@ -21,7 +21,14 @@ def argParse():
                         required=False,
                         help = 'Path to text file with blobs',
                         type=str,
-                        default='20200320-215736.txt')
+                        default='annotated_lists/20200320-215736_annotated.txt')
+
+    parser.add_argument("-c", "--c",
+                        required=False,
+                        help='Extract full frames',
+                        type=str,
+                        default=True)
+
     parser.add_argument("-output_path", "-output_path",
                         required=False,
                         help = 'output folder for frames',
@@ -54,7 +61,9 @@ if __name__ == '__main__':
 
 
     pnts = Pnt(b=args.b)
-    vid  = PlotBlobs(b=args.b,v=args.v, output_path = args.output_path, extract_frames=args.extract_frames, pnts = pnts)
+
+
+    vid  = PlotBlobs(b=args.b,v=args.v, output_path = args.output_path, extract_frames=args.extract_frames, pnts = pnts, c=args.c)
     vid.showFrames()
     #pnts1 = Pnt('annotated_lists/20200217-083636_annotated.txt')
     print('done')

@@ -11,8 +11,9 @@ from com.obj_detector import *
 from com.tkinint1 import *
 from com.gui_window import *
 class PlotBlobs(object):
-    def __init__(self, b, v, output_path, extract_frames, pnts):
-        self.F = annotation_file(filename=b, new_filename='annotated')
+    def __init__(self, b, v, output_path, extract_frames, pnts, c):
+        self.full_frame_extract_enable = c
+        #self.F = annotation_file(filename=b, new_filename='annotated')
         self.Node = os.getcwd() + v
         self.readFrom = 7
         self.readTill = self.readFrom + 50
@@ -72,18 +73,27 @@ class PlotBlobs(object):
                     frame_resized1 = frame_resized.copy()
                     coord = []
                     if (self.cnt in self.b_id):
-                        if obj_found:
-                            pause = not pause
-                        else:
-                            pause = pause
+                        #if obj_found:
+                        #    pause = not pause
+                        #else:
+                        #    pause = pause
                         print(COLOR.GREEN + 'Birds found in frame' + str(pause) + COLOR.GREEN)
                         i = self.b_id.index(self.cnt)
                         cv2.putText(frame_resized1, "blobs in frame =" + str(self.b_in_frame[i]), (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1, 1)
                         birds.clear()
+                        from com.common_txt_file import SaveToTXT
+                        __save_to_txt = SaveToTXT(frame=source_frame.copy(), path=self.output_path,
+                                                  filename='Frame_' + str(self.cnt),
+                                                  frame_id=self.cnt)
+
+                        __save_to_txt.create_txt()
+                        from com.common_frame_files import SaveToFrame
+                        __save_to_frame = SaveToFrame(frame=source_frame.copy(), path=self.output_path, filename='Frame_' + str(self.cnt))
                         for ix, valx in enumerate (self.b_x[i][:]):
                             x = int (valx)
                             y = int(self.b_y[i][ix])
                             s = self.b_s[i][ix]
+
 
                             #cv2.circle(frame_resized, (x, y), 30, (0, 255, 255), 6)
                             if self.extract_frames:
@@ -99,13 +109,25 @@ class PlotBlobs(object):
                              #   frame_resized1 = frame_resized.copy()
                                 if contrast <= 0.7 and len(self.b_x[i][:]) < 20:
 
-                                    birds.append(crop_img.copy())
-                                    coord.append([ix, x, y, x - x1, y - y1, s, len(self.b_x[i][:])])
-                                    #frame_name = 'frame_' + str(self.cnt) + '_' + str(ix) +'_' + 'x_'+str(x) +'_y_'+str(y) + '_C_' + str(contrast)+'.png'
+
+
                                     #cv2.imwrite(self.output_path+'/'+frame_name, crop_img)
                                     #self.F.write('{0:5}{1:8}{2:8}{3:6}{4:4}\n'.format(self.cnt, x, y, s, len(self.b_x[i][:])))
                                 #   cv2.rectangle(frame_resized, (x-int(s*4), y-int(s*2.5)), (x+int(s*4), y+int(s*2.5)), (0, 255, 255), 2)
-                                    cv2.rectangle(frame_resized1, (x - self.BoundingBox, y - self.BoundingBox),(x + self.BoundingBox, y + self.BoundingBox), (0, 255, 255), 2)
+
+
+                                    __save_to_txt.write_txt(x= x, y= y, s= s)
+                                    __save_to_frame.create_full_frame()
+                                  #  __save_to_frame.create_full_frame()
+                                        #print('self.full_frame_extract_enable', self.full_frame_extract_enable)
+                                        #frame_name = 'frame_' + str(self.cnt) + '_' + str(ix) + '_' + 'x_' + str(x) + '_y_' + str(y) + '_C_' + str(contrast) + '.png'
+                                        #cv2.imwrite(self.output_path + '/' + frame_name, crop_img)
+                                        #print
+                                    birds.append(crop_img.copy())
+                                    coord.append([ix, x, y, x - x1, y - y1, s, len(self.b_x[i][:])])
+                                    frame_name = 'frame_' + str(self.cnt) + '_' + str(ix) + '_' + 'x_' + str(
+                                        x) + '_y_' + str(y) + '_C_' + str(contrast) + '.png'
+                                    cv2.rectangle(frame_resized1, (__save_to_txt.x1, __save_to_txt.y1),(__save_to_txt.x2, __save_to_txt.y2), (0, 255, 255), 2)
                                     cv2.putText(frame_resized1, str(ix), (x+50, y), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 2,2)
                                     cv2.putText(frame_resized1, str(s), (x + 50, y+40), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255),2,)
 
@@ -114,6 +136,7 @@ class PlotBlobs(object):
                                     cv2.rectangle(frame_resized1, (x - self.BoundingBox, y - self.BoundingBox), (x + self.BoundingBox, y + self.BoundingBox), (0, 255, 0),2)
                                     cv2.putText(frame_resized1, str(ix), (x + 50, y), cv2.FONT_HERSHEY_SIMPLEX, 1.5,(0, 255, 0), 2, 2)
                                     cv2.putText(frame_resized1, str(s), (x + 50, y + 40), cv2.FONT_HERSHEY_SIMPLEX, 1.5,(0, 255, 0), 2, )
+                        __save_to_txt.close_txt()
 
                     frame_resized1 = ResizeImage(image=frame_resized1, fx=0.5, fy=0.5)
                     cv2.putText(frame_resized1, self.Node, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, 1)
@@ -124,22 +147,22 @@ class PlotBlobs(object):
                     cv2.putText(frame_resized1, 'frame: ' + str(self.cnt) + '  timestamp: ' + strTimeFrame, (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, 1)
                     cv2.imshow('frame', frame_resized1)
 
-                    if birds != []:
-                        Temp = []
-                        print(coord, coord[0][0])
-                        for i, val in enumerate(birds):
-                            blank_image = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
-                            blank_image[0:birds[i].shape[0], 0:birds[i].shape[1]] = birds[i].copy()
-                            img = draw_marks(blank_image, (coord[i][3], coord[i][4]), color=(255, 0, 255), Thickness=1, length=15)
-                            Temp.append(img)
-                            if i >0:
-                                blank_image_concat = cv2.hconcat([blank_image_concat,img])
-                            else:
-                                blank_image_concat = Temp[-1]
+                    #if birds != []:
+                    #    Temp = []
+                    #    print(coord, coord[0][0])
+                    #    for i, val in enumerate(birds):
+                    #        blank_image = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
+                    #        blank_image[0:birds[i].shape[0], 0:birds[i].shape[1]] = birds[i].copy()
+                    #        img = draw_marks(blank_image, (coord[i][3], coord[i][4]), color=(255, 0, 255), Thickness=1, length=15)
+                    #        Temp.append(img)
+                    #        if i >0:
+                     #           blank_image_concat = cv2.hconcat([blank_image_concat,img])
+                     #       else:
+                     #           blank_image_concat = Temp[-1]
 
                         # Graphics window
-                        pba = GUI_Birds(blank_image_concat, len(birds), birds, self.cnt, coord,  self.output_path, self.F, source_frame)
-                        pba.root.mainloop()
+                     #   pba = GUI_Birds(blank_image_concat, len(birds), birds, self.cnt, coord,  self.output_path, self.F, source_frame)
+                     #   pba.root.mainloop()
                       #  root = tkinter.Tk()
                        # im = Image.fromarray(blank_image_concat)
                         #imgtk = ImageTk.PhotoImage(image=im)
@@ -147,11 +170,11 @@ class PlotBlobs(object):
                         #cv2.imshow("Birds", blank_image_concat)
                         #root.mainloop()
                         #main_menu()
-                        birds.clear()
-                        blank_image = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
+                     #   birds.clear()
+                     #   blank_image = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
 
-                    else:
-                        pass
+                    #else:
+                     #   pass
                 else:
                     break
             else:
@@ -165,5 +188,5 @@ class PlotBlobs(object):
                 pause = not pause
 
         self.cap.release()
-        self.F.close()
+#        self.F.close()
         cv2.destroyAllWindows()

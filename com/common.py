@@ -158,3 +158,4 @@ def annotation_file(filename='20200217-083636.txt', new_filename='annotated'):
     else:
         print(COLOR.GREEN + new_filename + ' is opened for writing' + COLOR.END)
     return  F
+
