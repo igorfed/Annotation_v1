@@ -65,14 +65,19 @@ class PlotBlobs(object):
         blank_image = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
         blank_image_concat = np.zeros((self.BoundingBox * 2, self.BoundingBox * 2, 3), np.uint8)
         while (self.cap.isOpened):
+
             if (not pause ):
                 ret, self.frame, self.cnt = FrameCapture(self.cap)
+                if self.cnt > self.b_id[-1]:
+                    break
                 if (ret==True):
                     frame_resized = self.frame.copy()
                     source_frame = self.frame.copy()
                     frame_resized1 = frame_resized.copy()
                     coord = []
-                    if (self.cnt in self.b_id):
+
+                    if ((self.cnt in self.b_id) ):
+
                         #if obj_found:
                         #    pause = not pause
                         #else:

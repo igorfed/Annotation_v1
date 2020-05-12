@@ -37,13 +37,13 @@ class Pnt(object):
         if (file==True):
             self.b = filename
             data = np.loadtxt(filename)
-            previous  = [int(data[0,0]), int(data[0,6])]
+            previous  = [int(data[0,0]), int(data[0,4])]
             self.b_id.append(previous[0])
             self.b_in_frame.append(previous[1])
             j = 0
             for index, value in enumerate(list(data[0:,0])):
                 if (data[index, 0] != previous[0]):
-                    previous = [int(data[index, 0]), int(data[index, 6])]
+                    previous = [int(data[index, 0]), int(data[index, 4])]
                     self.b_id.append(previous[0])
                     self.b_in_frame.append(previous[1])
                     self.b_x.append([])
@@ -52,11 +52,11 @@ class Pnt(object):
                     j = j + 1
                     self.b_x[j].append(data[index, 1])
                     self.b_y[j].append(data[index, 2])
-                    self.b_s[j].append(data[index, 5])
+                    self.b_s[j].append(data[index, 3])
                 else:
                     self.b_x[j].append(data[index, 1])
                     self.b_y[j].append(data[index, 2])
-                    self.b_s[j].append(data[index, 5])
+                    self.b_s[j].append(data[index, 3])
 
     def plot_all_blobs_in_a_video(self):
 

@@ -21,7 +21,7 @@ def argParse():
                         required=False,
                         help = 'Path to text file with blobs',
                         type=str,
-                        default='annotated_lists/20200320-215736_annotated.txt')
+                        default='annotated_lists/c2_resolution_good_annotated.txt')
 
     parser.add_argument("-c", "--c",
                         required=False,
